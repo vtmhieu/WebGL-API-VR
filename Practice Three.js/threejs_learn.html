@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Practice Three.js</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <script type="module">
+            import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+            //code java go here
+
+            // to display anything -> scene + camera + renderer
+
+            const scene = new THREE.Scene(); // the scene
+            const camera = new THREE.PerspectiveCamera(75,window.innerWidth / window.innerHeight,0.1,1000)
+            // 75 = field of view = the exetent of the scene that is seen on the display at any given moment (degree);
+            // aspect ratio = get the same result when you display the scene;
+            //near + far = if the object is further away from the camera than the value far or closer than the value near -> not rendered;
+
+            const renderer = new THREE.WebGLRenderer();//renderer
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            //size to render  the width and height of the browser window;
+            document.body.appendChild(renderer.domElement);
+            //add the renderer to our HTML document. This is a canvas element the renderer uses to display the scense to us.
+
+            const geometry = new THREE.BoxGeometry(1,1,1);
+            // this is a cube -> an object that contains all the points (vertices)
+            const material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+            // need to color it using hex color
+            const cube = new THREE.Mesh(geometry, material);
+            // combine all to get the cube
+            scene.add(cube);
+            // the thing added will be automatically to the coordinates (0,0,0). This cause both the camera and the cube to be inside each other
+
+            camera.position.z = 5;
+            // => need to move the camera out a bit.
+
+            function animate(){
+                requestAnimationFrame(animate);
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+                renderer.render(scene, camera);
+            }
+            //animate();
+            //This will create a loop that causes the renderer to draw the scene every time the screen is refreshed (on a typical screen this means 60 times per second).
+
+            if ( WebGL.isWebGLAvailable() ) {
+
+                // Initiate function or other initializations here
+                animate();
+            
+            } else {
+            
+                const warning = WebGL.getWebGLErrorMessage();
+                document.getElementById( 'container' ).appendChild( warning );
+            
+            }
+            //check the WebGL compatibility 
+        </script>
+    </body>
+</html>
