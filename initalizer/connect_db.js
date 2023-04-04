@@ -5,7 +5,7 @@ const { Client } = require('pg');
 const client = new Client({
   user: 'postgres',
   host: 'localhost',
-  database: 'Demo',
+  database: 'demo_cube',
   password: 'postgres',
   port: '5432',
 });
@@ -22,12 +22,12 @@ client.connect((err) => {
 });
 
 // execute a query
-/*client.query('SELECT * FROM your_table', (err, res) => {
+client.query('SELECT * FROM mytable', (err, res) => {
   if (err) {
     console.error('error executing query', err.stack);
   } else {
     console.log(res.rows);
   }
 });
-*/
+
 

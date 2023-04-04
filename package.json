@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.15.4",
+    "pf": "0.0.1",
+    "pg": "^8.10.0",
     "request": "^2.81.0",
     "socket.io": "^2.0.4"
   },
