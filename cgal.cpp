@@ -1,24 +1,40 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Delaunay_triangulation_3.h>
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Delaunay_triangulation_3<K> Delaunay;
-
-void generate_3d_object(const std::vector<std::tuple<double, double, double>> &points)
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh_simplification/edge_collapse.h>
+#include <CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_ratio_stop_predicate.h>
+#include <chrono>
+#include <fstream>
+#include <iostream>
+typedef CGAL::Simple_cartesian<double> Kernel;
+typedef Kernel::Point_3 Point_3;
+typedef CGAL::Surface_mesh<Point_3> Surface_mesh;
+namespace SMS = CGAL::Surface_mesh_simplification;
+int main(int argc, char **argv)
 {
-    // Create a Delaunay triangulation from the input points
-    Delaunay dt;
-    for (const auto &point : points)
+    Surface_mesh surface_mesh;
+    const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("data/cube-meshed.off");
+    std::ifstream is(filename);
+    if (!is || !(is >> surface_mesh))
     {
-        dt.insert(K::Point_3(std::get<0>(point), std::get<1>(point), std::get<2>(point)));
+        std::cerr << "Failed to read input mesh: " << filename << std::endl;
+        return EXIT_FAILURE;
     }
-
-    // Generate 3D object based on the Delaunay triangulation
-    // ...
-}
-
-extern "C++"
-{
-    // Export the generate_3d_object function for use in other files
-    void generate_3d_object(const std::vector<std::tuple<double, double, double>> &points);
+    if (!CGAL::is_triangle_mesh(surface_mesh))
+    {
+        std::cerr << "Input geometry is not triangulated." << std::endl;
+        return EXIT_FAILURE;
+    }
+    std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+    // In this example, the simplification stops when the number of undirected edges
+    // drops below 10% of the initial count
+    double stop_ratio = (argc > 2) ? std::stod(argv[2]) : 0.1;
+    SMS::Count_ratio_stop_predicate<Surface_mesh> stop(stop_ratio);
+    int r = SMS::edge_collapse(surface_mesh, stop);
+    std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+    std::cout << "\nFinished!\n"
+              << r << " edges removed.\n"
+              << surface_mesh.number_of_edges() << " final edges.\n";
+    std::cout << "Time elapsed: " << std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count() << "ms" << std::endl;
+    CGAL::IO::write_polygon_mesh((argc > 3) ? argv[3] : "data_return/out.obj", surface_mesh, CGAL::parameters::stream_precision(17));
+    return EXIT_SUCCESS;
 }
