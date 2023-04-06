@@ -9,11 +9,15 @@
                 padding: 0;
                 background-color: bisque;
             }
+            canvas {
+                width: 100%;
+                height: 100%;
+            }
         </style>
     </head>
     <body>
         <script type = "module">
-            import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+            import { OBJLoader } from 'node_modules/three/src/loaders/ObjectLoader.js';
             import * as THREE from 'https://unpkg.com/three/build/three.module.js';
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
