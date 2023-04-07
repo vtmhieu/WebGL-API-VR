@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TEST</title>
+        <meta charset="UTF-8">
+
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+            body{
+                margin: 0;
+            }
+            canvas{
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        
+        <script type ="module">
+            import * as THREE from '/three.js/build/three.module.js';
+            import {OBJLoader} from '/three.js/src/loaders/ObjectLoader.js';
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();//renderer
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const loader = new THREE.OBJLoader();
+            loader.load('data_return/out.obj', function (geometry){
+                const material = new THREE.MeshBasicMaterial({color: 0x00ff00,});
+                const mesh = new THREE.Mesh(geometry, material);
+                scene.add(mesh);
+            },
+            undefined,
+            function(error){
+                console.log(error);
+            });
+            const light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(0, 0, 10);
+            scene.add(light);
+
+            // Render the scene
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+
+        </script>
+    </body>
+</html>

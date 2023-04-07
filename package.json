@@ -9,6 +9,7 @@
   "author": "thangnt",
   "license": "ISC",
   "dependencies": {
+    "cesium": "^1.104.0",
     "express": "^4.15.4",
     "pf": "0.0.1",
     "pg": "^8.10.0",
